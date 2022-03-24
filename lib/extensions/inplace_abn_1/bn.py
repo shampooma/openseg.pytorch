@@ -7,7 +7,7 @@ try:
 except ImportError:
     from Queue import Queue
 
-from lib.extensions.inplace_abn_1.functions import *
+from .functions import *
 
 class ABN(nn.Module):
     """Activated Batch Normalization

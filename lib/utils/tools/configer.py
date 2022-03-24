@@ -13,7 +13,7 @@ import json
 import os
 import sys
 
-from lib.utils.tools.logger import Logger as Log
+from .logger import Logger as Log
 from ast import literal_eval
 
 
@@ -91,7 +91,7 @@ class Configer(object):
                         )
                     )
                     sys.exit(1)
-                
+
                 parent_dict = parent_dict[cur_key]
 
             cur_key = remained_parts.pop(0)

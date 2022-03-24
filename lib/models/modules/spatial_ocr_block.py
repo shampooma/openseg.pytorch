@@ -5,7 +5,7 @@
 ## Copyright (c) 2019
 ##
 ## This source code is licensed under the MIT-style license found in the
-## LICENSE file in the root directory of this source tree 
+## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import os
@@ -16,7 +16,7 @@ from torch import nn
 from torch.autograd import Variable
 from torch.nn import functional as F
 
-from lib.models.tools.module_helper import ModuleHelper
+from ..tools.module_helper import ModuleHelper
 
 
 def label_to_onehot(gt, num_classes, ignore_index=-1):
@@ -29,7 +29,7 @@ def label_to_onehot(gt, num_classes, ignore_index=-1):
     x[x == ignore_index] = num_classes
     # convert label into onehot format
     onehot = torch.zeros(N, x.size(1), x.size(2), num_classes + 1).cuda()
-    onehot = onehot.scatter_(-1, x.unsqueeze(-1), 1)          
+    onehot = onehot.scatter_(-1, x.unsqueeze(-1), 1)
 
     return onehot.permute(0, 3, 1, 2)
 
@@ -52,15 +52,15 @@ class SpatialGather_Module(nn.Module):
             batch_size, c, h, w = gt_probs.size(0), gt_probs.size(1), gt_probs.size(2), gt_probs.size(3)
             gt_probs = gt_probs.view(batch_size, c, -1)
             feats = feats.view(batch_size, feats.size(1), -1)
-            feats = feats.permute(0, 2, 1) # batch x hw x c 
+            feats = feats.permute(0, 2, 1) # batch x hw x c
             gt_probs = F.normalize(gt_probs, p=1, dim=2)# batch x k x hw
             ocr_context = torch.matmul(gt_probs, feats).permute(0, 2, 1).unsqueeze(3)# batch x k x c
-            return ocr_context               
+            return ocr_context
         else:
             batch_size, c, h, w = probs.size(0), probs.size(1), probs.size(2), probs.size(3)
             probs = probs.view(batch_size, c, -1)
             feats = feats.view(batch_size, feats.size(1), -1)
-            feats = feats.permute(0, 2, 1) # batch x hw x c 
+            feats = feats.permute(0, 2, 1) # batch x hw x c
             probs = F.softmax(self.scale * probs, dim=2)# batch x k x hw
             ocr_context = torch.matmul(probs, feats).permute(0, 2, 1).unsqueeze(3)# batch x k x c
             return ocr_context
@@ -126,13 +126,13 @@ class _ObjectAttentionBlock(nn.Module):
     Return:
         N X C X H X W
     '''
-    def __init__(self, 
-                 in_channels, 
-                 key_channels, 
-                 scale=1, 
+    def __init__(self,
+                 in_channels,
+                 key_channels,
+                 scale=1,
                  use_gt=False,
                  use_bg=False,
-                 fetch_attention=False, 
+                 fetch_attention=False,
                  bn_type=None):
         super(_ObjectAttentionBlock, self).__init__()
         self.scale = scale
@@ -190,7 +190,7 @@ class _ObjectAttentionBlock(nn.Module):
         else:
             sim_map = torch.matmul(query, key)
             sim_map = (self.key_channels**-.5) * sim_map
-            sim_map = F.softmax(sim_map, dim=-1)   
+            sim_map = F.softmax(sim_map, dim=-1)
 
         # add bg context ...
         context = torch.matmul(sim_map, value) # hw x k x k x c
@@ -215,17 +215,17 @@ class _ObjectAttentionBlock(nn.Module):
 
 
 class ObjectAttentionBlock2D(_ObjectAttentionBlock):
-    def __init__(self, 
-                 in_channels, 
-                 key_channels, 
-                 scale=1, 
-                 use_gt=False, 
+    def __init__(self,
+                 in_channels,
+                 key_channels,
+                 scale=1,
+                 use_gt=False,
                  use_bg=False,
-                 fetch_attention=False, 
+                 fetch_attention=False,
                  bn_type=None):
         super(ObjectAttentionBlock2D, self).__init__(in_channels,
                                                      key_channels,
-                                                     scale, 
+                                                     scale,
                                                      use_gt,
                                                      use_bg,
                                                      fetch_attention,
@@ -241,25 +241,25 @@ class SpatialOCR_Module(nn.Module):
     use_bg=True: use the ground-truth label to compute the ideal background context to augment the representations.
     use_oc=True: use object context or not.
     """
-    def __init__(self, 
-                 in_channels, 
-                 key_channels, 
-                 out_channels, 
-                 scale=1, 
-                 dropout=0.1, 
+    def __init__(self,
+                 in_channels,
+                 key_channels,
+                 out_channels,
+                 scale=1,
+                 dropout=0.1,
                  use_gt=False,
                  use_bg=False,
                  use_oc=True,
-                 fetch_attention=False, 
+                 fetch_attention=False,
                  bn_type=None):
         super(SpatialOCR_Module, self).__init__()
         self.use_gt = use_gt
         self.use_bg = use_bg
         self.use_oc = use_oc
         self.fetch_attention = fetch_attention
-        self.object_context_block = ObjectAttentionBlock2D(in_channels, 
-                                                           key_channels, 
-                                                           scale, 
+        self.object_context_block = ObjectAttentionBlock2D(in_channels,
+                                                           key_channels,
+                                                           scale,
                                                            use_gt,
                                                            use_bg,
                                                            fetch_attention,
@@ -311,11 +311,11 @@ class SpatialOCR_Context(nn.Module):
     """
     def __init__(self, in_channels, key_channels, scale=1, dropout=0, bn_type=None,):
         super(SpatialOCR_Context, self).__init__()
-        self.object_context_block = ObjectAttentionBlock2D(in_channels, 
-                                                           key_channels, 
-                                                           scale, 
+        self.object_context_block = ObjectAttentionBlock2D(in_channels,
+                                                           key_channels,
+                                                           scale,
                                                            bn_type=bn_type)
-        
+
     def forward(self, feats, proxy_feats):
         context = self.object_context_block(feats, proxy_feats)
         return context
@@ -394,10 +394,10 @@ if __name__ == "__main__":
 
     ocp_gather_infer = SpatialGather_Module(19)
     ocp_distr_infer = SpatialOCR_Module(in_channels=512,
-                                         key_channels=256, 
+                                         key_channels=256,
                                          out_channels=512,
                                          scale=1,
-                                         dropout=0, 
+                                         dropout=0,
                                          bn_type='inplace_abn')
 
     ocp_gather_infer.eval()
@@ -409,7 +409,7 @@ if __name__ == "__main__":
 
     def count_parameters(model):
         return sum(p.numel() for p in model.parameters() if p.requires_grad)
-  
+
     avg_time = 0
     avg_mem  = 0
     import time

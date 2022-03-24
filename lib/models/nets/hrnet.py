@@ -5,7 +5,7 @@
 ## Copyright (c) 2018
 ##
 ## This source code is licensed under the MIT-style license found in the
-## LICENSE file in the root directory of this source tree 
+## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import os
@@ -14,8 +14,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from lib.models.backbones.backbone_selector import BackboneSelector
-from lib.models.tools.module_helper import ModuleHelper
+from ..backbones.backbone_selector import BackboneSelector
+from ..tools.module_helper import ModuleHelper
 
 
 class HRNet_W48(nn.Module):
@@ -62,8 +62,8 @@ class HRNet_W48_ASPOCR(nn.Module):
         # extra added layers
         in_channels = 720 # 48 + 96 + 192 + 384
         from lib.models.modules.spatial_ocr_block import SpatialOCR_ASP_Module
-        self.asp_ocr_head = SpatialOCR_ASP_Module(features=720, 
-                                                  hidden_features=256, 
+        self.asp_ocr_head = SpatialOCR_ASP_Module(features=720,
+                                                  hidden_features=256,
                                                   out_features=256,
                                                   dilations=(24, 48, 72),
                                                   num_classes=self.num_classes,
@@ -108,15 +108,15 @@ class HRNet_W48_OCR(nn.Module):
         self.conv3x3 = nn.Sequential(
             nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
             ModuleHelper.BNReLU(512, bn_type=self.configer.get('network', 'bn_type')),
-            )  
-        from lib.models.modules.spatial_ocr_block import SpatialGather_Module
+            )
+        from ..modules.spatial_ocr_block import SpatialGather_Module
         self.ocr_gather_head = SpatialGather_Module(self.num_classes)
-        from lib.models.modules.spatial_ocr_block import SpatialOCR_Module
-        self.ocr_distri_head = SpatialOCR_Module(in_channels=512, 
-                                                 key_channels=256, 
-                                                 out_channels=512, 
+        from ..modules.spatial_ocr_block import SpatialOCR_Module
+        self.ocr_distri_head = SpatialOCR_Module(in_channels=512,
+                                                 key_channels=256,
+                                                 out_channels=512,
                                                  scale=1,
-                                                 dropout=0.05, 
+                                                 dropout=0.05,
                                                  bn_type=self.configer.get('network', 'bn_type'))
         self.cls_head = nn.Conv2d(512, self.num_classes, kernel_size=1, stride=1, padding=0, bias=True)
         self.aux_head = nn.Sequential(
@@ -169,11 +169,11 @@ class HRNet_W48_OCR_B(nn.Module):
         from lib.models.modules.spatial_ocr_block import SpatialGather_Module
         self.ocr_gather_head = SpatialGather_Module(self.num_classes)
         from lib.models.modules.spatial_ocr_block import SpatialOCR_Module
-        self.ocr_distri_head = SpatialOCR_Module(in_channels=256, 
-                                                 key_channels=128, 
-                                                 out_channels=256, 
+        self.ocr_distri_head = SpatialOCR_Module(in_channels=256,
+                                                 key_channels=128,
+                                                 out_channels=256,
                                                  scale=1,
-                                                 dropout=0.05, 
+                                                 dropout=0.05,
                                                  bn_type=self.configer.get('network', 'bn_type'))
         self.cls_head = nn.Conv2d(256, self.num_classes, kernel_size=1, stride=1, padding=0, bias=True)
         self.aux_head = nn.Sequential(
@@ -205,4 +205,3 @@ class HRNet_W48_OCR_B(nn.Module):
         out_aux = F.interpolate(out_aux, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True)
         out = F.interpolate(out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True)
         return out_aux, out
-        

@@ -19,7 +19,7 @@ try:
 except ImportError:
     from urllib.request import urlretrieve
 
-from lib.utils.tools.logger import Logger as Log
+from ...utils.tools.logger import Logger as Log
 
 
 class ModuleHelper(object):
@@ -90,7 +90,7 @@ class ModuleHelper(object):
             return SwitchNorm2d
 
         elif bn_type == 'gn':
-            return functools.partial(nn.GroupNorm, num_groups=32)    
+            return functools.partial(nn.GroupNorm, num_groups=32)
 
         elif bn_type == 'inplace_abn':
             torch_ver = torch.__version__[:3]
@@ -102,12 +102,12 @@ class ModuleHelper(object):
                 return functools.partial(InPlaceABNSync, activation='none')
 
             elif torch_ver in ('1.0', '1.1'):
-                from lib.extensions.inplace_abn_1.bn import InPlaceABNSync
+                from ...extensions.inplace_abn_1.bn import InPlaceABNSync
                 if ret_cls:
                     return InPlaceABNSync
 
-                return functools.partial(InPlaceABNSync, activation='none')  
-                          
+                return functools.partial(InPlaceABNSync, activation='none')
+
             elif torch_ver == '1.2':
                 from inplace_abn import InPlaceABNSync
                 if ret_cls:
@@ -143,7 +143,7 @@ class ModuleHelper(object):
             # settings for "wide_resnet38"  or network == "resnet152"
             if network == "wide_resnet":
                 pretrained_dict = pretrained_dict['state_dict']
-                
+
             model_dict = model.state_dict()
 
             if network == "hrnet_plus":

@@ -9,7 +9,7 @@ import math
 from collections import OrderedDict
 import torch.nn as nn
 
-from lib.models.tools.module_helper import ModuleHelper
+from ...tools.module_helper import ModuleHelper
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152', 'resnext50_32x4d', 'resnext101_32x8d']
@@ -238,7 +238,7 @@ class ResNextModels(object):
         model = ResNext('resnext101_32x8d', Bottleneck, [3, 4, 23, 3],
                        pretrained, progress, bn_type=self.configer.get('network', 'bn_type'),
                        **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="resnext")
         return model
 
@@ -257,7 +257,7 @@ class ResNextModels(object):
         model = ResNext('resnext101_32x16d', Bottleneck, [3, 4, 23, 3],
                        pretrained, progress, bn_type=self.configer.get('network', 'bn_type'),
                        **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="resnext")
         return model
 
@@ -276,7 +276,7 @@ class ResNextModels(object):
         model = ResNext('resnext101_32x32d', Bottleneck, [3, 4, 23, 3],
                        pretrained, progress, bn_type=self.configer.get('network', 'bn_type'),
                        **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="resnext")
         return model
 
@@ -295,6 +295,6 @@ class ResNextModels(object):
         model = ResNext('resnext101_32x48d', Bottleneck, [3, 4, 23, 3],
                        pretrained, progress, bn_type=self.configer.get('network', 'bn_type'),
                        **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="resnext")
         return model

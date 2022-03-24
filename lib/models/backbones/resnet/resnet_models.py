@@ -13,8 +13,8 @@ import math
 from collections import OrderedDict
 import torch.nn as nn
 
-from lib.models.tools.module_helper import ModuleHelper
-from lib.models.backbones.resnet.wide_resnet_models import WiderResNetA2
+from ...tools.module_helper import ModuleHelper
+from .wide_resnet_models import WiderResNetA2
 
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
@@ -111,7 +111,7 @@ class ResNet(nn.Module):
         self.inplanes = 128 if deep_base else 64
         if deep_base:
             self.resinit = nn.Sequential(OrderedDict([
-                ('conv1', nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1, bias=False)),
+                ('conv1', nn.Conv2d(1, 64, kernel_size=3, stride=2, padding=1, bias=False)),
                 ('bn1', ModuleHelper.BatchNorm2d(bn_type=bn_type)(64)),
                 ('relu1', nn.ReLU(inplace=False)),
                 ('conv2', nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1, bias=False)),
@@ -290,7 +290,7 @@ class ResNetModels(object):
         """
         model = WiderResNetA2([1, 1, 1, 1, 1, 1],
                        bn_type=self.configer.get('network', 'bn_type'), **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="wide_resnet")
         return model
 
@@ -299,7 +299,7 @@ class ResNetModels(object):
         """
         model = WiderResNetA2([1, 1, 1, 3, 1, 1],
                        bn_type=self.configer.get('network', 'bn_type'), **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="wide_resnet")
         return model
 
@@ -308,6 +308,6 @@ class ResNetModels(object):
         """
         model = WiderResNetA2([3, 3, 6, 3, 1, 1],
                        bn_type=self.configer.get('network', 'bn_type'), **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
             all_match=False, network="wide_resnet")
         return model

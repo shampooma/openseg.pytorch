@@ -7,7 +7,7 @@ import torch.nn as nn
 from collections import OrderedDict
 from functools import partial
 
-from lib.models.tools.module_helper import ModuleHelper 
+from ...tools.module_helper import ModuleHelper
 
 
 

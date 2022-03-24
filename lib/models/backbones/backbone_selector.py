@@ -5,7 +5,7 @@
 ## Copyright (c) 2019
 ##
 ## This source code is licensed under the MIT-style license found in the
-## LICENSE file in the root directory of this source tree 
+## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
@@ -13,9 +13,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from lib.models.backbones.resnet.resnet_backbone import ResNetBackbone
-from lib.models.backbones.hrnet.hrnet_backbone import HRNetBackbone
-from lib.utils.tools.logger import Logger as Log
+from .resnet.resnet_backbone import ResNetBackbone
+from .hrnet.hrnet_backbone import HRNetBackbone
+from ...utils.tools.logger import Logger as Log
 
 
 class BackboneSelector(object):

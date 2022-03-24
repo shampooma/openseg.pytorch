@@ -11,9 +11,9 @@ import pdb
 import torch
 import torch.nn as nn
 
-from lib.models.backbones.resnet.resnet_models import ResNetModels
-from lib.models.backbones.resnet.resnext_models import ResNextModels
-from lib.models.backbones.resnet.resnest_models import ResNeStModels
+from .resnet_models import ResNetModels
+from .resnext_models import ResNextModels
+from .resnest_models import ResNeStModels
 
 # if torch.__version__[:3] == '0.4':
 #     from lib.models.backbones.resnet.dcn_resnet_models import DCNResNetModels

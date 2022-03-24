@@ -3,7 +3,7 @@
 ## Email: zhanghang0704@gmail.com
 ## Copyright (c) 2020
 ##
-## LICENSE file in the root directory of this source tree 
+## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import math
@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from torch.nn import Conv2d, Module, Linear, ReLU
 from torch.nn.modules.utils import _pair
 
-from lib.models.tools.module_helper import ModuleHelper
+from ...tools.module_helper import ModuleHelper
 
 __all__ = ['ResNeSt', 'Bottleneck', 'SKConv2d']
 
@@ -67,7 +67,7 @@ class SplAtConv2d(Module):
         batch, rchannel = x.shape[:2]
         if self.radix > 1:
             splited = torch.split(x, rchannel//self.radix, dim=1)
-            gap = sum(splited) 
+            gap = sum(splited)
         else:
             gap = x
         gap = F.adaptive_avg_pool2d(gap, 1)
@@ -263,7 +263,7 @@ class ResNeSt(nn.Module):
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, ceil_mode=True)  # change.
         self.layer1 = self._make_layer(block, 64, layers[0], bn_type=bn_type, is_first=False)
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2, bn_type=bn_type)
-        
+
         if dilated or dilation == 4:
             self.layer3 = self._make_layer(block, 256, layers[2], stride=1,
                                            dilation=2, bn_type=bn_type,
@@ -284,7 +284,7 @@ class ResNeSt(nn.Module):
                                            dropblock_prob=dropblock_prob)
             self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
                                            bn_type=bn_type,
-                                           dropblock_prob=dropblock_prob)            
+                                           dropblock_prob=dropblock_prob)
         self.avgpool = GlobalAvgPool2d()
         self.drop = nn.Dropout(final_drop) if final_drop > 0.0 else None
         self.fc = nn.Linear(512 * block.expansion, num_classes)
@@ -381,7 +381,7 @@ class ResNeStModels(object):
         model = ResNeSt(Bottleneck, [3, 4, 6, 3],
                        radix=2, groups=1, bottleneck_width=64, dilated=True, dilation=4,
                        deep_stem=False, stem_width=32, avg_down=True,
-                       avd=True, avd_first=False, 
+                       avd=True, avd_first=False,
                        bn_type=self.configer.get('network', 'bn_type'), **kwargs)
         model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
                                         all_match=False, network="resnest")
@@ -391,7 +391,7 @@ class ResNeStModels(object):
         model = ResNeSt(Bottleneck, [3, 4, 6, 3],
                        radix=2, groups=1, bottleneck_width=64, dilated=True, dilation=4,
                        deep_stem=True, stem_width=32, avg_down=True,
-                       avd=True, avd_first=False, 
+                       avd=True, avd_first=False,
                        bn_type=self.configer.get('network', 'bn_type'), **kwargs)
         model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
                                         all_match=False, network="resnest")
@@ -413,7 +413,7 @@ class ResNeStModels(object):
                         deep_stem=True, stem_width=64, avg_down=True,
                         avd=True, avd_first=False,
                         bn_type=self.configer.get('network', 'bn_type'), **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
                                         all_match=False, network="resnest")
         return model
 
@@ -423,7 +423,7 @@ class ResNeStModels(object):
                         deep_stem=True, stem_width=64, avg_down=True,
                         avd=True, avd_first=False,
                         bn_type=self.configer.get('network', 'bn_type'), **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
                                         all_match=False, network="resnest")
         return model
 
@@ -433,6 +433,6 @@ class ResNeStModels(object):
                         deep_stem=True, stem_width=64, avg_down=True,
                         avd=True, avd_first=False,
                         bn_type=self.configer.get('network', 'bn_type'), **kwargs)
-        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'), 
+        model = ModuleHelper.load_model(model, pretrained=self.configer.get('network', 'pretrained'),
                                         all_match=False, network="resnest")
         return model
