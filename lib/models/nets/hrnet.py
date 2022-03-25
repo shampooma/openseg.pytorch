@@ -104,7 +104,7 @@ class HRNet_W48_OCR(nn.Module):
         self.num_classes = self.configer.get('data', 'num_classes')
         self.backbone = BackboneSelector(configer).get_backbone()
 
-        in_channels = 720
+        in_channels = 448
         self.conv3x3 = nn.Sequential(
             nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
             ModuleHelper.BNReLU(512, bn_type=self.configer.get('network', 'bn_type')),
@@ -147,7 +147,7 @@ class HRNet_W48_OCR(nn.Module):
 
         out_aux = F.interpolate(out_aux, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True)
         out = F.interpolate(out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True)
-        return out_aux, out
+        return out
 
 
 class HRNet_W48_OCR_B(nn.Module):
